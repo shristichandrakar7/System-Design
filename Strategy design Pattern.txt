@@ -1,0 +1,76 @@
+Refer Notes First
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Drive {
+public:
+    virtual void drive() = 0;
+};
+
+class Vehicle {
+protected:
+    Drive* driveCapability;
+
+public:
+    Vehicle(Drive* driveCapability) : driveCapability(driveCapability) {}
+
+    void drive() {
+        driveCapability->drive();
+    }
+};
+
+class LuxuryVehicle : public Vehicle {
+public:
+    LuxuryVehicle(Drive* driveCapability) : Vehicle(driveCapability) {}
+
+    void drive() {
+        Vehicle::drive();
+    }
+};
+
+class SportsVehicle : public Vehicle {
+public:
+    SportsVehicle(Drive* driveCapability) : Vehicle(driveCapability) {}
+
+    void drive() {
+        Vehicle::drive();
+    }
+};
+
+class PublicVehicle : public Vehicle {
+public:
+    PublicVehicle(Drive* driveCapability) : Vehicle(driveCapability) {}
+
+    void drive() {
+        Vehicle::drive();
+    }
+};
+
+class NormalDrive : public Drive {
+public:
+    void drive() override {
+        std::cout << "normal drive capability" << std::endl;
+    }
+};
+
+class LuxuryDrive : public Drive {
+public:
+    void drive() override {
+        std::cout << "luxury drive capability" << std::endl;
+    }
+};
+
+int main() {
+
+    LuxuryVehicle mercedes(new LuxuryDrive());
+    mercedes.drive();
+
+    SportsVehicle audi(new LuxuryDrive());
+    audi.drive();
+
+    LuxuryVehicle bmw(new NormalDrive());
+    bmw.drive();
+
+    return 0;
+}
