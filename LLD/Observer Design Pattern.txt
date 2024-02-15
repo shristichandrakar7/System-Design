@@ -1,0 +1,104 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+// Forward declaration of NotificationAlertObserver
+class NotificationAlertObserver;
+
+// StocksObservable interface
+class StocksObservable {
+public:
+    virtual void add(NotificationAlertObserver* observer) = 0;
+    virtual void remove(NotificationAlertObserver* observer) = 0;
+    virtual void notifySubscribers() = 0;
+    virtual void setStockCount(int newStockAdded) = 0;
+    virtual int getStockCount() = 0;
+};
+
+// NotificationAlertObserver interface
+class NotificationAlertObserver {
+public:
+    virtual void update() = 0;
+};
+
+// EmailAlertObserverImpl class
+class EmailAlertObserverImpl : public NotificationAlertObserver {
+public:
+    EmailAlertObserverImpl(const std::string& emailId, StocksObservable* observable) : emailId(emailId), observable(observable) {}
+    void update() override {
+        sendMail(emailId, "product is in stock hurry up!");
+    }
+private:
+    void sendMail(const std::string& emailId, const std::string& msg) {
+        std::cout << "Mail sent to: " << emailId << std::endl;
+        // Send the actual email to the end user
+    }
+    std::string emailId;
+    StocksObservable* observable;
+};
+
+// MobileAlertObserverImpl class
+class MobileAlertObserverImpl : public NotificationAlertObserver {
+public:
+    MobileAlertObserverImpl(const std::string& userName, StocksObservable* observable) : userName(userName), observable(observable) {}
+    void update() override {
+        sendMsgOnMobile(userName, "product is in stock hurry up!");
+    }
+private:
+    void sendMsgOnMobile(const std::string& userName, const std::string& msg) {
+        std::cout << "Message sent to: " << userName << std::endl;
+        // Send the actual message to the end user
+    }
+    std::string userName;
+    StocksObservable* observable;
+};
+
+// IphoneObservableImpl class
+class IphoneObservableImpl : public StocksObservable {
+public:
+    void add(NotificationAlertObserver* observer) override { observerList.push_back(observer); }
+    void remove(NotificationAlertObserver* observer) override {
+        auto it = find(observerList.begin(), observerList.end(), observer);
+        if (it != observerList.end()) {
+            observerList.erase(it);
+        }
+    }
+    void notifySubscribers() override {
+        for (auto observer : observerList) {
+            observer->update();
+        }
+    }
+    void setStockCount(int newStockAdded) override {
+        if (stockCount == 0) {
+            notifySubscribers();
+        }
+        stockCount += newStockAdded;
+    }
+    int getStockCount() override { return stockCount; }
+private:
+    std::vector<NotificationAlertObserver*> observerList;
+    int stockCount = 0;
+};
+
+// Store class
+class Store {
+public:
+    void run() {
+        IphoneObservableImpl iphoneStockObservable;
+        NotificationAlertObserver* observer1 = new EmailAlertObserverImpl("xyz1@gmail.com", &iphoneStockObservable);
+        NotificationAlertObserver* observer2 = new EmailAlertObserverImpl("xyz2@gmail.com", &iphoneStockObservable);
+        NotificationAlertObserver* observer3 = new MobileAlertObserverImpl("xyz username", &iphoneStockObservable);
+        iphoneStockObservable.add(observer1);
+        iphoneStockObservable.add(observer2);
+        iphoneStockObservable.add(observer3);
+        iphoneStockObservable.setStockCount(18);
+        iphoneStockObservable.setStockCount(-18);
+        iphoneStockObservable.remove(observer2);
+        iphoneStockObservable.setStockCount(8);
+    }
+};
+
+int main() {
+    Store store;
+    store.run();
+    return 0;
+}
