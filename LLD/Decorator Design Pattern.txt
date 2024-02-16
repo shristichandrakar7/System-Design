@@ -1,0 +1,105 @@
+#include <bits/stdc++.h>
+using namespace std;
+class Pizza {
+public:
+    std::string description = "Unknown Pizza";
+
+    virtual std::string getDescription() {
+        return description;
+    }
+
+    virtual int getCost() = 0;
+};
+
+class ToppingsDecorator : public Pizza {
+public:
+    virtual std::string getDescription() = 0;
+};
+
+class PeppyPaneer : public Pizza {
+public:
+    PeppyPaneer() { description = "PeppyPaneer"; }
+    int getCost() override { return 100; }
+};
+
+class FarmHouse : public Pizza {
+public:
+    FarmHouse() { description = "FarmHouse"; }
+    int getCost() override { return 200; }
+};
+
+class Margherita : public Pizza {
+public:
+    Margherita() { description = "Margherita"; }
+    int getCost() override { return 100; }
+};
+
+class ChickenFiesta : public Pizza {
+public:
+    ChickenFiesta() { description = "ChickenFiesta"; }
+    int getCost() override { return 200; }
+};
+
+class SimplePizza : public Pizza {
+public:
+    SimplePizza() { description = "SimplePizza"; }
+    int getCost() override { return 50; }
+};
+
+class FreshTomato : public ToppingsDecorator {
+    Pizza* pizza;
+
+public:
+    FreshTomato(Pizza* pizza) : pizza(pizza) {}
+    
+    std::string getDescription() override {
+        return pizza->getDescription() + ", Fresh Tomato ";
+    }
+
+    int getCost() override {
+        return 40 + pizza->getCost();
+    }
+};
+
+class Barbeque : public ToppingsDecorator {
+    Pizza* pizza;
+
+public:
+    Barbeque(Pizza* pizza) : pizza(pizza) {}
+
+    std::string getDescription() override {
+        return pizza->getDescription() + ", Barbeque ";
+    }
+
+    int getCost() override {
+        return 90 + pizza->getCost();
+    }
+};
+
+class Paneer : public ToppingsDecorator {
+    Pizza* pizza;
+
+public:
+    Paneer(Pizza* pizza) : pizza(pizza) {}
+
+    std::string getDescription() override {
+        return pizza->getDescription() + ", Paneer ";
+    }
+
+    int getCost() override {
+        return 70 + pizza->getCost();
+    }
+};
+
+int main() {
+    Pizza* pizza = new Margherita();
+    std::cout << pizza->getDescription() << " Cost :" << pizza->getCost() << std::endl;
+
+    Pizza* pizza2 = new FarmHouse();
+    pizza2 = new FreshTomato(pizza2);
+    pizza2 = new Paneer(pizza2);
+    std::cout << pizza2->getDescription() << " Cost :" << pizza2->getCost() << std::endl;
+    
+    Pizza* pizza3 = new Barbeque(nullptr);
+    return 0;
+}
