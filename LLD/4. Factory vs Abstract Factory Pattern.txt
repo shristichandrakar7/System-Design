@@ -1,0 +1,225 @@
+FACTORY PATTERN
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+#include<bits/stdc++.h>
+using namespace std;
+class Shape {
+public:
+    virtual void draw() = 0;
+};
+
+class Rectangle : public Shape {
+public:
+    void draw() override {
+        std::cout << "Rectangle" << std::endl;
+    }
+};
+
+class Square : public Shape {
+public:
+    void draw() override {
+        std::cout << "Square" << std::endl;
+    }
+};
+
+class Circle : public Shape {
+public:
+    void draw() override {
+        std::cout << "Circle" << std::endl;
+    }
+};
+
+class ShapeFactory {
+public:
+    // use getShape method to get an object of type shape
+    Shape* getShape(const std::string& shapeType) {
+        if (shapeType.empty()) {
+            return nullptr;
+        }
+        if (shapeType == "CIRCLE") {
+            return new Circle();
+        } else if (shapeType == "RECTANGLE") {
+            return new Rectangle();
+        } else if (shapeType == "SQUARE") {
+            return new Square();
+        }
+        return nullptr;
+    }
+};
+
+int main() {
+    ShapeFactory shapeFactory;
+
+    // get an object of Circle and call its draw method.
+    Shape* shape1 = shapeFactory.getShape("CIRCLE");
+    shape1->draw();
+
+    // get an object of Rectangle and call its draw method.
+    Shape* shape2 = shapeFactory.getShape("RECTANGLE");
+    shape2->draw();
+
+    // get an object of Square and call its draw method.
+    Shape* shape3 = shapeFactory.getShape("SQUARE");
+    shape3->draw();
+
+    // Clean up allocated memory
+    delete shape1;
+    delete shape2;
+    delete shape3;
+
+    return 0;
+}
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+ABSTRACT FACTORY PATTERN
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+#include<bits/stdc++.h>
+using namespace std;
+
+// Abstract Product Interface for Cars
+class Car {
+public:
+    virtual void assemble() = 0;
+};
+
+// Abstract Product Interface for Car Specifications
+class CarSpecification {
+public:
+    virtual void display() = 0;
+};
+
+// Concrete Product for Sedan Car
+class Sedan : public Car {
+public:
+    void assemble() override {
+        std::cout << "Assembling Sedan car." << std::endl;
+    }
+};
+
+// Concrete Product for Mercedes Car
+class Mercedes : public Car {
+public:
+    void assemble() override {
+        std::cout << "Assembling Mercedes car." << std::endl;
+    }
+};
+
+// Concrete Product for BMW Car
+class BMW : public Car {
+public:
+    void assemble() override {
+        std::cout << "Assembling BMW car." << std::endl;
+    }
+};
+
+// Concrete Product for Swift Car
+class Swift : public Car {
+public:
+    void assemble() override {
+        std::cout << "Assembling Swift car." << std::endl;
+    }
+};
+
+// Concrete Product for Ordinary Car Specification
+class OrdinarySpecification : public CarSpecification {
+public:
+    void display() override {
+        std::cout << "Ordinary Car Specification: Safety features compliant with local regulations." << std::endl;
+    }
+};
+
+// Concrete Product for Luxury Car Specification
+class LuxurySpecification : public CarSpecification {
+public:
+    void display() override {
+        std::cout << "Luxury Car Specification: Fuel efficiency and emissions compliant with EU standards." << std::endl;
+    }
+};
+
+// Abstract Factory Interface
+class CarFactory {
+public:
+    virtual Car* createCar(const std::string& carType) = 0;
+    virtual CarSpecification* createSpecification() = 0;
+};
+
+// Concrete Factory for Ordinary Cars
+class OrdinaryCarFactory : public CarFactory {
+public:
+    Car* createCar(const std::string& carType) override {
+        if (carType.empty()) {
+            return nullptr;
+        }
+        if (carType == "SEDAN") {
+            return new Sedan();
+        } 
+        else if (carType == "SWIFT") {
+            return new Swift();
+        }
+        return nullptr;
+    }
+
+    CarSpecification* createSpecification() override {
+        return new OrdinarySpecification();
+    }
+};
+
+// Concrete Factory for Luxury Cars
+class LuxuryCarFactory : public CarFactory {
+public:
+    Car* createCar(const std::string& carType) override {
+        if (carType.empty()) {
+            return nullptr;
+        }
+        if (carType == "BMW") {
+            return new BMW();
+        } 
+        else if (carType == "MERCEDES") {
+            return new Mercedes();
+        }
+        return nullptr;
+    }
+
+    CarSpecification* createSpecification() override {
+        return new LuxurySpecification();
+    }
+};
+
+// Client Code
+int main(){
+    // Creating cars for Ordinary
+    CarFactory* ordinaryFactory = new OrdinaryCarFactory();
+    Car* ordinarySedan = ordinaryFactory->createCar("SEDAN");
+    Car* ordinarySwift = ordinaryFactory->createCar("SWIFT");
+    CarSpecification* ordinarySpec = ordinaryFactory->createSpecification();
+    if (ordinarySedan) {
+        ordinarySedan->assemble();
+        delete ordinarySedan;
+    }
+    if (ordinarySwift) {
+        ordinarySwift->assemble();
+        delete ordinarySwift;
+    }
+    ordinarySpec->display();
+
+    // Creating cars for Luxury
+    CarFactory* luxuryFactory = new LuxuryCarFactory();
+    Car* luxuryBMW = luxuryFactory->createCar("BMW");
+    Car* luxuryMercedes = luxuryFactory->createCar("MERCEDES");
+    CarSpecification* luxurySpec = luxuryFactory->createSpecification();
+    if (luxuryBMW) {
+        luxuryBMW->assemble();
+        delete luxuryBMW;
+    }
+    if (luxuryMercedes) {
+        luxuryMercedes->assemble();
+        delete luxuryMercedes;
+    }
+    luxurySpec->display();
+
+    // Cleanup memory
+    delete ordinaryFactory;
+    delete ordinarySpec;
+    delete luxuryFactory;
+    delete luxurySpec;
+
+    return 0;
+}
